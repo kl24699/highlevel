@@ -1,0 +1,40 @@
+--The user enters four digits using switches SW15–SW0.
+--The display cycles through these digits using the central button as a manual clock
+library IEEE;                                        -- use of library
+use IEEE.STD_LOGIC_1164.ALL;      --use of standard logic
+
+entity four_digit_display is
+    Port ( switches : in STD_LOGIC_VECTOR(15 downto 0);    -- use of standard logic vector
+           central_button : in STD_LOGIC;                                       -- use of central_button
+           display : out STD_LOGIC_VECTOR(6 downto 0);           -- use of display
+           anodes : out STD_LOGIC_VECTOR(3 downto 0)            -- use of anode
+         );
+end four_digit_display;
+
+architecture Behavioral of four_digit_display is
+    signal current_digit : STD_LOGIC_VECTOR (3 downto 0);
+    signal active_digit : STD_LOGIC_VECTOR (1 downto 0) := "00"; -- Controls which digit is active
+begin
+    process(central_button)
+    begin
+        if rising_edge(central_button) then
+            active_digit <= active_digit + 1;
+        end if;              -- end of if
+    end process;      -- end of process
+
+    -- Select the current digit based on active_digit
+    with active_digit select
+        current_digit <= switches(3 downto 0) when "00",   --current digit
+                         switches(7 downto 4) when "01",               --when 1
+                         switches(11 downto 8) when "10",             --when 2
+                         switches(15 downto 12) when others;
+
+    inst_decoder: entity work.seven_segment_decoder          -- Calling the seven-segment decoder
+        port map (BCD_in => current_digit, seg_out => display);
+
+    with active_digit select    -- Enabling only one digit at a time
+        anodes <= "1110" when "00",  -- Enabling first digit
+                 "1101" when "01", -- Enabling second digit
+                 "1011" when "10", -- Enabling third digit
+                 "0111" when others; -- Enabling fourth digit
+end Behavioral;     --ending behavioral
