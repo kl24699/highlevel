@@ -1,0 +1,32 @@
+#converts a 4-bit BCD input into a 7-segment display output.
+library IEEE;                                                 --use of the library                                      
+use IEEE.STD_LOGIC_1164.ALL;               --use of standard logic
+use IEEE.STD_LOGIC_ARITH.ALL;             --use of standard logic arthmatic
+use IEEE.STD_LOGIC_UNSIGNED.ALL;     --use of standard logic unsigned
+
+entity seven_segment_decoder is
+    Port ( BCD_in : in  STD_LOGIC_VECTOR (3 downto 0);  -- 4 bit Binary Coded Decimal input
+           seg_out : out STD_LOGIC_VECTOR (6 downto 0)  -- 7 segment output
+         );
+end seven_segment_decoder;
+
+architecture Behavioral of seven_segment_decoder is
+begin                               
+    process(BCD_in)       --beginning of the process
+    begin
+        case BCD_in is       --beginning of the case 
+            when "0000" => seg_out <= "0000001"; -- For 0
+            when "0001" => seg_out <= "1001111"; -- For 1
+            when "0010" => seg_out <= "0010010"; -- For 2
+            when "0011" => seg_out <= "0000110"; -- For 3
+            when "0100" => seg_out <= "1001100"; -- For 4
+            when "0101" => seg_out <= "0100100"; -- For 5
+            when "0110" => seg_out <= "0100000"; -- For 6
+            when "0111" => seg_out <= "0001111"; -- For 7
+            when "1000" => seg_out <= "0000000"; -- For 8
+            when "1001" => seg_out <= "0000100"; -- For 9
+            when others => seg_out <= "1111111"; --  For Blank
+        end case;        --ending the case of the program
+    end process;      --ending the process of the program
+end Behavioral;     --ending the behavioral of the program
+
