@@ -1,0 +1,49 @@
+-- The countdown timer must decrement the displayed time every second.
+--  It should have SET mode and GO mode.
+library IEEE;                                                  -- use of the library
+use IEEE.STD_LOGIC_1164.ALL;               --use of the standard logic
+use IEEE.STD_LOGIC_ARITH.ALL;             --use of the standard logic arthmatic
+use IEEE.STD_LOGIC_UNSIGNED.ALL;     --use of the standard logic unsigned
+
+entity countdown_timer is
+    Port ( clk : in STD_LOGIC;                                                     -- setting the clock
+           reset : in STD_LOGIC;                                                    -- setting reset mode
+           mode_button : in STD_LOGIC;                                    -- setting the mode button
+           up_button : in STD_LOGIC;                                          -- setting the up mode button
+           down_button : in STD_LOGIC;                                    -- setting the down mode button
+           display : out STD_LOGIC_VECTOR(6 downto 0);      -- setting the display
+           anodes : out STD_LOGIC_VECTOR(3 downto 0)      -- setting the anodes
+         );
+end countdown_timer;                                                          -- ending the countdown timer
+architecture Behavioral of countdown_timer is
+    signal minutes : INTEGER range 0 to 60 := 0;    -- assigning the minutes
+    signal seconds : INTEGER range 0 to 59 := 0;    -- assigning the seconds
+    signal mode : STD_LOGIC := '0'; -- 0 = SET, 1 = GO  -- setting the mode
+begin
+    process(clk, reset)     -- beginning of the process
+    begin
+        if reset = '1' then         
+            minutes <= 0; 
+            seconds <= 0;
+        elsif rising_edge(clk) then
+            if mode = '0' then -- SET mode
+                if up_button = '1' and minutes < 60 then
+                    minutes <= minutes + 1;
+                    seconds <= 0;
+                elsif down_button = '1' and minutes > 0 then
+                    minutes <= minutes - 1;
+                    seconds <= 0;
+                end if;
+            else -- GO mode
+                if seconds = 0 then
+                    if minutes > 0 then
+                        minutes <= minutes - 1;
+                        seconds <= 59;
+                    end if;
+                else
+                    seconds <= seconds - 1;
+                end if;              
+            end if;              
+        end if;                  -- end of if
+    end process;        -- ending the process
+end Behavioral;       -- ending the behavioral
